@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: > 
+# my insttance
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-051ed863837a0b1b6 # AMI ID
+      InstanceType: t2.micro
+      Tags: 
+        - Key: "Name"
+          Value: "ec2-vscode-by-edwige"
+          
+   # my vpc
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.31.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+        - Key: Name 
+          Value: VPC 
+
+  # my vpc
+  MySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: MyVPC
+      CidrBlock: 172.31.16.0/20
+      AvailabilityZone: "us-west-1a"
+      Tags:
+      - Key: "Name"
+        Value: "subnet"      

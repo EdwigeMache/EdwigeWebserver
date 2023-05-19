@@ -1,0 +1,32 @@
+Parameters:
+  AmifamilyName:
+    Description: Amifamily Name
+    Type: String
+    AllowedValues: [AmazonLinux2, Ubuntu20.04LTS]
+    ConstraintDescription: must AmazonLinux2 or Ubuntu20.04LTS
+
+
+
+
+Mappings:
+
+  AmazonLinux2:
+    us-west-2:
+      Name: ami-0123456789abcdef
+    us-east-1:  
+      Name: ami-0123456789abcdef
+
+Mappings:
+
+  Ubuntu20.04LTS:
+    us-west-2:
+      Name: ami-0123456789abcdef
+    us-east-1:  
+      Name: ami-0123456789abcdef 
+
+Resources: 
+  myEC2Instance: 
+    Type: "AWS::EC2::Instance"
+    Properties: 
+      ImageId: !FindInMap [AmazonLinux2, "us-west-2", Name]
+      InstanceType: !FindInMap [Ubuntu20.04LTS, !Ref "AmifamilyName", Name]

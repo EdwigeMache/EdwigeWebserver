@@ -1,0 +1,16 @@
+Description: > 
+# my insttance
+
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-051ed863837a0b1b6
+      KeyName: edw-key
+      SecurityGroupIds:
+        - sg-004710f81bb967f67
+      SubnetId: subnet-04ce3024f29add53d
+      Tags: 
+        - Key: "Name"
+          Value: "myEC2Instance"

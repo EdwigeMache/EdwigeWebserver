@@ -1,0 +1,70 @@
+# General Template with base Infrastructure
+Parameters:
+  SampleNetworkCrossStack:
+    Description: Name of the base stack with all infrastructure
+    Type: String
+    Default: EdwigeStack1
+
+Mappings:
+
+  EdwigeMap:
+    us-west-2:
+      Name: ami-04e914639d0cca79a
+    us-east-1:
+      Name: ami-0889a44b331db0194
+  
+
+
+Resources:
+  MyWebserver:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !FindInMap [EdwigeMap, "us-west-2", Name]
+      KeyName: keypair1
+      NetworkInterfaces:
+        - GroupSet:
+            - Fn::ImportValue: 
+               !Sub "${SampleNetworkCrossStack}-SecurityGroupID"
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId:  
+            Fn::ImportValue: !Sub "${SampleNetworkCrossStack}-SubnetID"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo '<html><body><h1 style="color:Red;">Welcome to my Webserver in cloudformation Template </h1></body></html>' > /var/www/html/index.html
+  
+
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyWebserver
+
+Outputs:
+  PrivateIpAddress:
+    Description: Returns private ip Adress
+    Value: !GetAtt MyWebserver.PrivateIp
+  PrivateDnsName:
+    Description: Returns value of DNS name
+    Value: !GetAtt MyWebserver.PrivateDnsName 
+
+     
+   
+
+     
+
+            
+              
+
+ 
+
+
+
+  
+    

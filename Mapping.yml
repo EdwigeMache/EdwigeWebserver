@@ -1,0 +1,23 @@
+
+
+
+
+
+Mappings:
+
+  EdwigeMap:
+    us-west-2:
+      Linux: ami-04e914639d0cca79a
+      Ubuntu: ami-0fcf52bcf5db7b003
+    us-east-1:
+      Linux: ami-0889a44b331db0194
+      Ubuntu: ami-007855ac798b5175e
+
+  
+
+Resources: 
+  EC2Instance: 
+    Type: "AWS::EC2::Instance"
+    Properties: 
+      ImageId: !FindInMap [EdwigeMap, "us-east-1", Ubuntu]
+      
