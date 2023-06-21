@@ -1,0 +1,59 @@
+Parameters:
+  InstanceType:
+    Description: ec2 instance type
+    Type: String
+    Default: t2.micro
+  KeyName:
+    Description: Name of an existing key EC2 key pair for ssh acccess to the EC2 instance
+    Type: AWS::EC2::KeyPair::KeyName
+  SSHLocation:
+    Description: the IP address range that can be used to ssh to the EC2 instance 
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0 
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: must be a valid IP CIDR Range of the form x.x.x.x/x.
+  LatestAmiID:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+
+
+
+Resources:
+  MyWebserver:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref LatestAmiID
+      KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo "
+          <html>
+          <body bgcolor=#f1f1f1 text=Purple>
+          <h1>Hello from Server in ${AWS::Region}</h1>
+          </body>
+          </html>
+          " > /var/www/html/index.html   
+
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:  
+      GroupDescription: Enable SSH via port 22 
+      SecurityGroupIngress:
+         - IpProtocol: tcp
+           FromPort: 22
+           ToPort: 22
+           CidrIp: !Ref SSHLocation
+         - IpProtocol: tcp
+           FromPort: 80
+           ToPort: 80
+           CidrIp: 0.0.0.0/0     

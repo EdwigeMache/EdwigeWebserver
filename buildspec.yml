@@ -1,0 +1,30 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11      #install python    
+  pre_build:
+    commands:
+      - echo ====we are in prebuild phase===
+      - echo checking whether python has been installed...
+      - python3 --version # return the version of python
+      - echo check whether pip3 is installed
+      - pip3 --version
+      - echo install cfn-lint
+      - pip3 install cfn-lint
+      - echo check whether cfn-lint is installed
+      - cfn-lint --version
+  build:
+    commands:
+      - echo ***** testing our cloudformation *****
+      - cfn-lint 1-ec2-user-data.yml 
+      - aws cloudformation package --template-file 1-ec2-user-data.yml --s3-bucket deploy-artifact-bucket1 --output-template-file output-templ.yml
+  post_build:
+    commands:
+      - echo Build completed on `date`
+     
+artifacts:
+  files:
+    - 1-ec2-user-data.yml
+    - output-templ.yml
