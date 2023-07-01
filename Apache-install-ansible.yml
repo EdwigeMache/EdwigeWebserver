@@ -1,0 +1,75 @@
+# play1
+- name: edwApache linux
+  hosts: linux-hosts
+
+  tasks:
+    - name: upgrading # name of tasks
+      ansible.builtin.yum:
+        name: '*'
+        state: latest
+    - name: Install Apache 
+      ansible.builtin.yum:
+        name: httpd
+        state: present
+    - name: Start service httpd, if not started
+      ansible.builtin.service:
+        name: httpd
+        state: started 
+    - name: Enable service httpd, and not touch the state
+      ansible.builtin.service:
+        name: httpd
+        enabled: yes
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /root/index.html
+        dest: /var/www/html
+
+# play 2
+- name: edwApache ubuntu
+  hosts: ubuntu-hosts
+
+  tasks:
+    - name: upgrading the latest version of my application # name of tasks
+      ansible.builtin.apt:
+        name: '*'
+        state: latest
+    - name: Install application 
+      ansible.builtin.apt:
+        name: application
+        state: present
+    - name: Start service application , if not started
+      ansible.builtin.service:
+        name: application
+        state: started 
+    - name: Enable service application, and not touch the state
+      ansible.builtin.service:
+        name: application
+        enabled: yes
+    - name: Copy file from controller to the nodes
+      ansible.builtin.copy:
+        src: /root/index.html
+        dest: /var/www/html
+
+# Play 3
+
+- name: install GIT on all nodes.
+  hosts: all                 
+
+  tasks:
+    - name: install GIT on all the nodes in the inventory file
+      ansible.builtin.yum:
+        name: git
+        state: present       
+
+
+
+
+
+
+
+         
+      
+
+
+        
+
